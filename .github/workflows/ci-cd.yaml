@@ -17,7 +17,7 @@ jobs:
       uses: docker/login-action@v3
       with:
         username: ${{ secrets.narendrachalla }}
-        password: ${{ secrets.Narendra@03 }}
+        password: ${{ secrets.Narendra03 }}
 
     - name: Build Docker Image
       run: |
