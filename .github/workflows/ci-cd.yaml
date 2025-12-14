@@ -1,66 +1,27 @@
-name: CI/CD Pipeline
+name: CI Pipeline
 
-# 🚀 Triggers the workflow on pushes to the 'main' branch
 on:
   push:
     branches:
       - main
 
-# 💼 Defines the jobs to run in the pipeline
 jobs:
-  build-and-deploy:
-    # 💻 Specifies the runner environment
+  build-and-push:
     runs-on: ubuntu-latest
 
-    # 📝 Steps for the CI/CD process
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # --- Docker Build and Push (CI) ---
-
-      - name: Set up Docker Buildx (Optional but Recommended)
-        # Use Buildx for better multi-arch support and performance
-        uses: docker/setup-buildx-action@v3
-
       - name: Login to Docker Hub
-        # Authenticates with Docker Hub using secrets
         uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_PASSWORD }}
-      
+
       - name: Build and Push Docker image
-        # Combines the build and push steps for efficiency
         uses: docker/build-push-action@v5
         with:
-          context: . # Assumes Dockerfile is in the root
+          context: .
           push: true
-          tags: narendrachalla/myapp:latest # Uses the 'latest' tag
-          # Optional: Add a tag based on the commit SHA for immutability
-          # tags: |
-          #   narendrachalla/myapp:latest
-          #   narendrachalla/myapp:${{ github.sha }}
-
-      # --- Kubernetes Deployment (CD) ---
-
-      - name: Setup kubectl
-        # Sets up the Kubernetes command-line tool
-        uses: azure/setup-kubectl@v3
-        with:
-          version: v1.30.0
-
-      - name: Configure kubeconfig
-        # Writes the Kubernetes configuration from a secret
-        run: |
-          mkdir -p ~/.kube
-          echo "${{ secrets.KUBECONFIG }}" > ~/.kube/config
-        
-      - name: Deploy to Kubernetes
-        # Updates the deployment to use the newly pushed image
-        run: |
-          # Use the image tag from the successful push
-          kubectl set image deployment/myapp myapp=narendrachalla/myapp:latest --record
-          # Wait for the rollout to complete before finishing the job
-          kubectl rollout status deployment/myapp
-          echo "Deployment successful!"
+          tags: narendrachalla/myapp:latest
