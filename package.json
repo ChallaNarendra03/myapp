@@ -1,0 +1,11 @@
+{
+  "name": "myapp",
+  "version": "1.0.0",
+  "description": "Node.js app for Kubernetes CI/CD project",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js"
+  },
+  "author": "Narendra",
+  "license": "ISC"
+}
